@@ -9,11 +9,6 @@ class Potter (private val pricing: Pricing, private val bundler: Bundler) {
                     .sum()
         }.min()
         return Price(min ?: 0)
-//        val priceIncent = bundler.bundles(*books)[0]
-//                .map(pricing::priceForBundle)
-//                .map(Price::inCent)
-//                .sum()
-//        return Price(priceIncent)
     }
 
 }
