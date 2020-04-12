@@ -19,8 +19,8 @@ class PotterSpec : StringSpec() {
 
     override fun beforeTest(testCase: TestCase) {
         clearAllMocks()
-        every {pricing.priceForBundle(1)} returns Price(singleBookPrice)
-        configureSimpleBundler()
+        configurePricingStub()
+        configureBundlerStub()
         potter = Potter(pricing,bundler)
     }
 
@@ -49,7 +49,11 @@ class PotterSpec : StringSpec() {
         }
     }
 
-    private fun configureSimpleBundler() {
+    private fun configurePricingStub() {
+        every { pricing.priceForBundle(1) } returns Price(singleBookPrice)
+    }
+
+    private fun configureBundlerStub() {
         every { bundler.bundles(BOOKS.I) } returns listOf(listOf(1))
         every { bundler.bundles(BOOKS.I, BOOKS.I) } returns listOf(listOf(1, 1))
         every { bundler.bundles(BOOKS.I, BOOKS.I, BOOKS.II) } returns listOf(listOf(1, 1, 1), listOf(1, 2))
