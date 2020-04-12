@@ -2,6 +2,7 @@ package de.agiledojo.potter
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCase
+import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -35,15 +36,18 @@ class PotterSpec : StringSpec() {
             price.inCent shouldBe singleBookPrice + singleBookPrice
         }
 
-        "when purchased books have multiple combinations of bundles return minimal price" {
-            every {pricing.priceForBundle(2)} returns Price(80)
-            val potter = Potter(pricing,bundler)
-            val price : Price = potter.priceFor(BOOKS.I,BOOKS.I,BOOKS.II)
-            price.inCent shouldBe 130
-            every {pricing.priceForBundle(2)} returns Price(120)
-            val otherprice : Price = potter.priceFor(BOOKS.I,BOOKS.I,BOOKS.II)
-            otherprice.inCent shouldBe 150
-
+        listOf(
+                row("two book bundle is cheaper than single book bundles", 2*singleBookPrice-20,
+                        3*singleBookPrice-20),
+                row("two book bundle is more expensive than single book bundles", 2*singleBookPrice+20,
+                        3*singleBookPrice)
+        ).map {(description: String, twoBookPrice: Int, bestPriceInCent: Int) ->
+            "should return cheapest bundle combination: $description" {
+                every {pricing.priceForBundle(2)} returns Price(twoBookPrice)
+                val potter = Potter(pricing,bundler)
+                val price : Price = potter.priceFor(BOOKS.I,BOOKS.I,BOOKS.II)
+                price.inCent shouldBe bestPriceInCent
+            }
         }
     }
 
