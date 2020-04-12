@@ -15,23 +15,22 @@ class PotterSpec : StringSpec() {
     val pricing = mockk<Pricing>()
     val bundler = mockk<Bundler>()
 
+    lateinit var  potter: Potter
+
     override fun beforeTest(testCase: TestCase) {
         clearAllMocks()
         every {pricing.priceForBundle(1)} returns Price(singleBookPrice)
-        every {bundler.bundles(BOOKS.I)} returns listOf(listOf(1))
-        every {bundler.bundles(BOOKS.I,BOOKS.I)} returns listOf(listOf(1,1))
-        every {bundler.bundles(BOOKS.I,BOOKS.I,BOOKS.II)} returns listOf(listOf(1,1,1),listOf(1,2))
+        configureSimpleBundler()
+        potter = Potter(pricing,bundler)
     }
 
     init {
-        "when purchased books are just one bundle return bundle price" {
-            val potter = Potter(pricing,bundler)
+        "when books are just one bundle then return then bundle price" {
             val price : Price = potter.priceFor(BOOKS.I)
             price.inCent shouldBe singleBookPrice
         }
 
-        "when purchased books have multiple bundles return sum of bundle prices" {
-            val potter = Potter(pricing,bundler)
+        "when books have multiple bundles then return the sum of the bundle prices" {
             val price : Price = potter.priceFor(BOOKS.I,BOOKS.I)
             price.inCent shouldBe singleBookPrice + singleBookPrice
         }
@@ -42,13 +41,18 @@ class PotterSpec : StringSpec() {
                 row("two book bundle is more expensive than single book bundles", 2*singleBookPrice+20,
                         3*singleBookPrice)
         ).map {(description: String, twoBookPrice: Int, bestPriceInCent: Int) ->
-            "should return cheapest bundle combination: $description" {
+            "when books can be splitted into several bundle combinations then return the price for the cheapest bundle combination, i.e.: $description" {
                 every {pricing.priceForBundle(2)} returns Price(twoBookPrice)
-                val potter = Potter(pricing,bundler)
                 val price : Price = potter.priceFor(BOOKS.I,BOOKS.I,BOOKS.II)
                 price.inCent shouldBe bestPriceInCent
             }
         }
+    }
+
+    private fun configureSimpleBundler() {
+        every { bundler.bundles(BOOKS.I) } returns listOf(listOf(1))
+        every { bundler.bundles(BOOKS.I, BOOKS.I) } returns listOf(listOf(1, 1))
+        every { bundler.bundles(BOOKS.I, BOOKS.I, BOOKS.II) } returns listOf(listOf(1, 1, 1), listOf(1, 2))
     }
 
 }
