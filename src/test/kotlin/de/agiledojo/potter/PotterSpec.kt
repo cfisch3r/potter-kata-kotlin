@@ -1,9 +1,7 @@
 package de.agiledojo.potter
 
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.core.spec.style.StringSpec
 import io.kotest.core.test.TestCase
-import io.kotest.data.row
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -26,7 +24,7 @@ class PotterSpec : FreeSpec() {
     }
 
     init {
-        "when books are just one bundle then return then bundle price" {
+        "when books are just one bundle then return the bundle price" {
             val price : Price = potter.priceFor(BOOKS.I)
             price.inCent shouldBe singleBookPrice
         }
@@ -37,18 +35,23 @@ class PotterSpec : FreeSpec() {
         }
 
         "when books can be splitted into several bundle combinations then return the price for the cheapest bundle combination" - {
+
             "choose two book bundle if cheaper than single book bundles" {
-                every {pricing.priceForBundle(2)} returns Price(2*singleBookPrice-20)
+                setTwoBookBundlePrice(2 * singleBookPrice - 20)
                 val price : Price = potter.priceFor(BOOKS.I,BOOKS.I,BOOKS.II)
                 price.inCent shouldBe 3*singleBookPrice-20
             }
 
             "choose single book bundles if two book bundle is more expensive" {
-                every {pricing.priceForBundle(2)} returns Price(2*singleBookPrice+20)
+                setTwoBookBundlePrice(2*singleBookPrice+20)
                 val price : Price = potter.priceFor(BOOKS.I,BOOKS.I,BOOKS.II)
                 price.inCent shouldBe 3*singleBookPrice
             }
         }
+    }
+
+    private fun setTwoBookBundlePrice(bundlePrice: Int) {
+        every { pricing.priceForBundle(2) } returns Price(bundlePrice)
     }
 
     private fun configurePricingStub() {
