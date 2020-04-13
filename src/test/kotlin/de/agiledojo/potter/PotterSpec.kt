@@ -14,38 +14,38 @@ class PotterSpec : FreeSpec() {
     val pricing = mockk<Pricing>()
     val bundler = mockk<Bundler>()
 
-    lateinit var  potter: Potter
+    lateinit var potter: Potter
 
     override fun beforeTest(testCase: TestCase) {
         clearAllMocks()
         configurePricingStub()
         configureBundlerStub()
-        potter = Potter(pricing,bundler)
+        potter = Potter(pricing, bundler)
     }
 
     init {
         "when books are just one bundle then return the bundle price" {
-            val price : Price = potter.priceFor(BOOKS.I)
+            val price: Price = potter.priceFor(listOf(BOOKS.I))
             price.inCent shouldBe singleBookPrice
         }
 
         "when books have multiple bundles then return the sum of the bundle prices" {
-            val price : Price = potter.priceFor(BOOKS.I,BOOKS.I)
+            val price: Price = potter.priceFor(listOf(BOOKS.I, BOOKS.I))
             price.inCent shouldBe singleBookPrice + singleBookPrice
         }
 
-        "when books can be splitted into several bundle combinations then return the price for the cheapest bundle combination" - {
+        "when books can be splitted into several bundle combinations then return the price for the cheapest combination" - {
 
-            "choose two book bundle if cheaper than single book bundles" {
+            "choose two book bundle if it is cheaper than single book bundles" {
                 setTwoBookBundlePrice(2 * singleBookPrice - 20)
-                val price : Price = potter.priceFor(BOOKS.I,BOOKS.I,BOOKS.II)
-                price.inCent shouldBe 3*singleBookPrice-20
+                val price: Price = potter.priceFor(listOf(BOOKS.I, BOOKS.I, BOOKS.II))
+                price.inCent shouldBe 3 * singleBookPrice - 20
             }
 
             "choose single book bundles if two book bundle is more expensive" {
-                setTwoBookBundlePrice(2*singleBookPrice+20)
-                val price : Price = potter.priceFor(BOOKS.I,BOOKS.I,BOOKS.II)
-                price.inCent shouldBe 3*singleBookPrice
+                setTwoBookBundlePrice(2 * singleBookPrice + 20)
+                val price: Price = potter.priceFor(listOf(BOOKS.I, BOOKS.I, BOOKS.II))
+                price.inCent shouldBe 3 * singleBookPrice
             }
         }
     }
@@ -59,9 +59,10 @@ class PotterSpec : FreeSpec() {
     }
 
     private fun configureBundlerStub() {
-        every { bundler.bundles(BOOKS.I) } returns listOf(listOf(1))
-        every { bundler.bundles(BOOKS.I, BOOKS.I) } returns listOf(listOf(1, 1))
-        every { bundler.bundles(BOOKS.I, BOOKS.I, BOOKS.II) } returns listOf(listOf(1, 1, 1), listOf(1, 2))
+        every { bundler.bundles(listOf(BOOKS.I)) } returns listOf(BundleCombination(listOf(1)))
+        every { bundler.bundles(listOf(BOOKS.I, BOOKS.I)) } returns listOf(BundleCombination(listOf(1, 1)))
+        every { bundler.bundles(listOf(BOOKS.I, BOOKS.I, BOOKS.II)) } returns listOf(BundleCombination(listOf(1, 1, 1)),
+                BundleCombination(listOf(1, 2)))
     }
 
 }
