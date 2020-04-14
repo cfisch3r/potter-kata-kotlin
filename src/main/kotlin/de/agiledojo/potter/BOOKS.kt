@@ -1,6 +1,5 @@
 package de.agiledojo.potter
 
 enum class BOOKS {
-    I,
-    II
+    I, II,III,IV,V
 }
