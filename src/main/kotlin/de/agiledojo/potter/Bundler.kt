@@ -1,5 +1,5 @@
 package de.agiledojo.potter
 
 interface Bundler {
-    fun bundles(books: List<BOOKS>) : List<BundleCombination>
+    fun variations(books: List<BOOKS>) : Set<BundleCombination>
 }

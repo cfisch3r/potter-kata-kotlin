@@ -59,9 +59,9 @@ class PotterSpec : FreeSpec() {
     }
 
     private fun configureBundlerStub() {
-        every { bundler.bundles(listOf(BOOKS.I)) } returns listOf(BundleCombination(listOf(1)))
-        every { bundler.bundles(listOf(BOOKS.I, BOOKS.I)) } returns listOf(BundleCombination(listOf(1, 1)))
-        every { bundler.bundles(listOf(BOOKS.I, BOOKS.I, BOOKS.II)) } returns listOf(BundleCombination(listOf(1, 1, 1)),
+        every { bundler.variations(listOf(BOOKS.I)) } returns setOf(BundleCombination(listOf(1)))
+        every { bundler.variations(listOf(BOOKS.I, BOOKS.I)) } returns setOf(BundleCombination(listOf(1, 1)))
+        every { bundler.variations(listOf(BOOKS.I, BOOKS.I, BOOKS.II)) } returns setOf(BundleCombination(listOf(1, 1, 1)),
                 BundleCombination(listOf(1, 2)))
     }
 
