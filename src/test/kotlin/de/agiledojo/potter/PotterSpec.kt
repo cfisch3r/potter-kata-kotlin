@@ -25,12 +25,12 @@ class PotterSpec : FreeSpec() {
 
     init {
         "when books are just one bundle then return the bundle price" {
-            val price: Price = potter.priceFor(listOf(BOOKS.I))
+            val price = potter.priceFor(listOf(BOOKS.I))
             price.inCent shouldBe singleBookPrice
         }
 
         "when books have multiple bundles then return the sum of the bundle prices" {
-            val price: Price = potter.priceFor(listOf(BOOKS.I, BOOKS.I))
+            val price = potter.priceFor(listOf(BOOKS.I, BOOKS.I))
             price.inCent shouldBe singleBookPrice + singleBookPrice
         }
 
@@ -38,13 +38,13 @@ class PotterSpec : FreeSpec() {
 
             "choose two book bundle if it is cheaper than single book bundles" {
                 setTwoBookBundlePrice(2 * singleBookPrice - 20)
-                val price: Price = potter.priceFor(listOf(BOOKS.I, BOOKS.I, BOOKS.II))
+                val price = potter.priceFor(listOf(BOOKS.I, BOOKS.I, BOOKS.II))
                 price.inCent shouldBe 3 * singleBookPrice - 20
             }
 
             "choose single book bundles if two book bundle is more expensive" {
                 setTwoBookBundlePrice(2 * singleBookPrice + 20)
-                val price: Price = potter.priceFor(listOf(BOOKS.I, BOOKS.I, BOOKS.II))
+                val price = potter.priceFor(listOf(BOOKS.I, BOOKS.I, BOOKS.II))
                 price.inCent shouldBe 3 * singleBookPrice
             }
         }
